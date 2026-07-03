@@ -1,6 +1,8 @@
---- /home/debian/gestsup_backup_20260703_125227/azure_ad_auth.php	2026-07-03 12:52:27.570107517 +0200
-+++ /tmp/l1.php	2026-07-03 15:31:28.047644179 +0200
-@@ -85,6 +85,10 @@
+diff --git a/azure_ad_auth.php b/azure_ad_auth.php
+index bdef811..5801d1e 100644
+--- a/azure_ad_auth.php
++++ b/azure_ad_auth.php
+@@ -85,6 +85,10 @@ if($parameters['azure_ad_sso'] && !$_SESSION['user_id'])
  
              if(!empty($gs_user['id']))
              {

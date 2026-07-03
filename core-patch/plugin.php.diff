@@ -1,6 +1,8 @@
---- /home/debian/gestsup_backup_20260703_125227/plugin.php	2026-07-03 14:48:06.449367578 +0200
-+++ /tmp/lp.php	2026-07-03 15:31:45.459638251 +0200
-@@ -26,6 +26,8 @@
+diff --git a/plugin.php b/plugin.php
+index e44e4c1..92e8fe2 100644
+--- a/plugin.php
++++ b/plugin.php
+@@ -26,6 +26,8 @@ while($plugin=$qry2->fetch())
      if($section=='main' && file_exists('plugins/'.$plugin['name'].'/main.php')) {include('plugins/'.$plugin['name'].'/main.php');}
      //page white list
      if($section=='page_white_list' && file_exists('plugins/'.$plugin['name'].'/page_white_list.php')) {include('plugins/'.$plugin['name'].'/page_white_list.php');}
@@ -9,7 +11,7 @@
      //favicon
      if($section=='favicon' && file_exists('plugins/'.$plugin['name'].'/favicon.php')) {include('plugins/'.$plugin['name'].'/favicon.php');} 
      //breadcrumb
-@@ -80,4 +82,4 @@
+@@ -80,4 +82,4 @@ while($plugin=$qry2->fetch())
      if($section=='plugin_stat_ticket_export_csv' && file_exists('plugins/'.$plugin['name'].'/plugin_stat_ticket_export_csv.php')) {include('plugins/'.$plugin['name'].'/plugin_stat_ticket_export_csv.php'); $plugin_stat_ticket_export_csv=1;} 
  }
  $qry2->closeCursor();

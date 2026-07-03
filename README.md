@@ -101,6 +101,7 @@ Le plugin **n'enlève jamais** une agence déjà associée à l'utilisateur : il
 │           ├── install.sql            # Créé la table + enregistre le plugin
 │           └── uninstall.sql          # Supprime la table + désenregistre le plugin
 ├── core-patch/                        # 3 lignes à appliquer au cœur GestSup (voir plus bas)
+│   ├── install.sh                     # Applique les 3 diffs automatiquement (recommandé)
 │   ├── plugin.php.diff
 │   ├── azure_ad_auth.php.diff
 │   └── azure_ad_auth2.php.diff
@@ -118,7 +119,21 @@ Le plugin **n'enlève jamais** une agence déjà associée à l'utilisateur : il
    ```
    *(adaptez utilisateur/groupe et permissions à votre configuration serveur)*
 
-2. **Appliquer le patch core** (3 lignes, voir [détail plus bas](#le-patch-core-3-lignes)) dans `plugin.php`, `azure_ad_auth.php` et `azure_ad_auth2.php`.
+2. **Appliquer le patch core** — deux méthodes possibles :
+
+   **Automatique (recommandé)** : le script détecte si le patch est déjà appliqué (sans risque de le faire deux fois), sauvegarde chaque fichier avant modification, et annule automatiquement si un fichier ne correspond pas à ce qui est attendu (version de GestSup trop différente) :
+   ```bash
+   ./core-patch/install.sh /chemin/vers/gestsup
+   ```
+   Exemple de sortie :
+   ```
+   OK    plugin.php patched (backup: /chemin/vers/gestsup_core_backup_20260703_162436/plugin.php)
+   OK    azure_ad_auth.php patched (backup: ...)
+   OK    azure_ad_auth2.php patched (backup: ...)
+   ```
+   Si un fichier a trop divergé de la version d'origine, le script s'arrête proprement (`FAIL`, fichier laissé intact) et vous invite à appliquer la modification manuellement.
+
+   **Manuelle** : voir le détail des 3 lignes à ajouter [plus bas](#le-patch-core-3-lignes), ou appliquez les fichiers `.diff` vous-même avec `patch -p1 < core-patch/xxx.diff` depuis la racine de GestSup.
 
 3. Dans GestSup, aller dans **Administration > Paramètres > Plugins > Store**. L'installation (création de la table `tentra_company_agency` + enregistrement du plugin) se fait **automatiquement** au chargement de cette page.
 
@@ -294,6 +309,7 @@ The plugin **never removes** an agency already linked to the user: it only adds 
 │           ├── install.sql            # Creates the table + registers the plugin
 │           └── uninstall.sql          # Drops the table + unregisters the plugin
 ├── core-patch/                        # 3 lines to apply to GestSup core (see below)
+│   ├── install.sh                     # Applies the 3 diffs automatically (recommended)
 │   ├── plugin.php.diff
 │   ├── azure_ad_auth.php.diff
 │   └── azure_ad_auth2.php.diff
@@ -311,7 +327,21 @@ The plugin **never removes** an agency already linked to the user: it only adds 
    ```
    *(adjust user/group/permissions to your server setup)*
 
-2. **Apply the core patch** (3 lines, see [details below](#the-core-patch-3-lines)) to `plugin.php`, `azure_ad_auth.php` and `azure_ad_auth2.php`.
+2. **Apply the core patch** — two options:
+
+   **Automatic (recommended)**: the script detects whether the patch is already applied (safe to re-run), backs up each file before touching it, and rolls back automatically if a file doesn't match what's expected (too different a GestSup version):
+   ```bash
+   ./core-patch/install.sh /path/to/gestsup
+   ```
+   Example output:
+   ```
+   OK    plugin.php patched (backup: /path/to/gestsup_core_backup_20260703_162436/plugin.php)
+   OK    azure_ad_auth.php patched (backup: ...)
+   OK    azure_ad_auth2.php patched (backup: ...)
+   ```
+   If a file has diverged too much from the original, the script stops cleanly (`FAIL`, file left untouched) and asks you to apply the change manually.
+
+   **Manual**: see the 3 lines to add [below](#the-core-patch-3-lines), or apply the `.diff` files yourself with `patch -p1 < core-patch/xxx.diff` from the GestSup root.
 
 3. In GestSup, go to **Administration > Parameters > Plugins > Store**. Installation (creates the `tentra_company_agency` table + registers the plugin) happens **automatically** when that page loads.
 
