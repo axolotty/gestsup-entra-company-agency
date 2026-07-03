@@ -1,20 +1,13 @@
 diff --git a/plugin.php b/plugin.php
-index e44e4c1..92e8fe2 100644
+index 2ec0e3d..166b2e1 100644
 --- a/plugin.php
 +++ b/plugin.php
 @@ -26,6 +26,8 @@ while($plugin=$qry2->fetch())
      if($section=='main' && file_exists('plugins/'.$plugin['name'].'/main.php')) {include('plugins/'.$plugin['name'].'/main.php');}
      //page white list
-     if($section=='page_white_list' && file_exists('plugins/'.$plugin['name'].'/page_white_list.php')) {include('plugins/'.$plugin['name'].'/page_white_list.php');}
+     if($section=='page_white_list' && file_exists('plugins/'.$plugin['name'].'/page_white_list.php')) {include('plugins/'.$plugin['name'].'/page_white_list.php');} 
 +    //azure ad auth success (successful Entra ID SSO login)
 +    if($section=='azure_ad_auth_success' && file_exists('plugins/'.$plugin['name'].'/azure_ad_auth_success.php')) {include('plugins/'.$plugin['name'].'/azure_ad_auth_success.php');}
      //favicon
      if($section=='favicon' && file_exists('plugins/'.$plugin['name'].'/favicon.php')) {include('plugins/'.$plugin['name'].'/favicon.php');} 
      //breadcrumb
-@@ -80,4 +82,4 @@ while($plugin=$qry2->fetch())
-     if($section=='plugin_stat_ticket_export_csv' && file_exists('plugins/'.$plugin['name'].'/plugin_stat_ticket_export_csv.php')) {include('plugins/'.$plugin['name'].'/plugin_stat_ticket_export_csv.php'); $plugin_stat_ticket_export_csv=1;} 
- }
- $qry2->closeCursor();
--?>
-+?>
-\ No newline at end of file

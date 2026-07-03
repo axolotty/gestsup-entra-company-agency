@@ -52,7 +52,7 @@ apply_one() {
 	mkdir -p "$BACKUP_DIR"
 	cp "$target" "$BACKUP_DIR/$relative_file"
 
-	if (cd "$GESTSUP_DIR" && patch -p1 --quiet --no-backup-if-mismatch < "$diff_file"); then
+	if (cd "$GESTSUP_DIR" && patch -p1 --quiet --no-backup-if-mismatch --ignore-whitespace < "$diff_file"); then
 		rm -f "$target.orig" "$target.rej"
 	else
 		echo "FAIL  $relative_file did not apply cleanly — file left untouched." >&2
