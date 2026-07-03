@@ -1,0 +1,13 @@
+--- /home/debian/gestsup_backup_20260703_125227/azure_ad_auth.php	2026-07-03 12:52:27.570107517 +0200
++++ /tmp/l1.php	2026-07-03 15:31:28.047644179 +0200
+@@ -85,6 +85,10 @@
+ 
+             if(!empty($gs_user['id']))
+             {
++                //plugin hook: post Entra ID SSO login logic (e.g. entra_company_agency plugin)
++                $section='azure_ad_auth_success';
++                include('plugin.php');
++
+                 echo 'Entra ID authentification successful, connection to GestSup...';
+                     //generate gs auth token
+                     $gs_token = bin2hex(random_bytes(32));
