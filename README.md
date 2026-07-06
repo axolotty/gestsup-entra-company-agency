@@ -55,23 +55,28 @@ sequenceDiagram
     GS->>PL: hook azure_ad_auth_success
     PL->>PL: Cherche companyName dans tentra_company_agency
     alt correspondance trouvée
-        PL->>GS: Ajoute l'agence associée (tusers_agencies)
+        PL->>PL: Compare a l'agence liee lors de la derniere connexion (tentra_company_agency_sync)
+        opt la societe a change depuis la derniere connexion
+            PL->>GS: Retire l'ancienne agence (tusers_agencies)
+        end
+        PL->>GS: Ajoute la nouvelle agence si absente (tusers_agencies)
     else pas de correspondance
         PL-->>GS: Ne fait rien
     end
     GS-->>U: Connexion GestSup terminée
 ```
 
-Le plugin **n'enlève jamais** une agence déjà associée à l'utilisateur : il complète, il ne remplace pas.
+Le plugin ne touche **que ce qu'il a lui-même lié** : une agence assignée manuellement par un administrateur n'est jamais retirée. En revanche, si la société Entra ID d'un utilisateur change (changement de maison), l'agence que le plugin avait ajoutée lors d'une connexion précédente est retirée au profit de la nouvelle — l'utilisateur ne se retrouve pas avec les deux à la fois. Cette correspondance "quelle agence ai-je ajoutée pour cet utilisateur" est gardée dans `tentra_company_agency_sync`.
 
 ### Fonctionnalités
 
 - ✅ Association automatique société Entra ID → agence GestSup à chaque connexion SSO
+- ✅ Suit les changements de société : un changement de maison retire l'ancienne agence liée par le plugin et ajoute la nouvelle
 - ✅ Page d'administration dédiée (liste, ajout, modification, suppression des correspondances)
 - ✅ Liste déroulante des sociétés déjà connues de GestSup (`tcompany`) — pas de saisie libre source de fautes de frappe
 - ✅ Installation/désinstallation/activation via l'interface standard **Administration > Paramètres > Plugins**
 - ✅ Interface bilingue **Français / Anglais**, s'adapte à la langue de l'utilisateur connecté
-- ✅ Aucune donnée existante modifiée ni supprimée : le plugin ne fait qu'ajouter des associations manquantes
+- ✅ Ne touche jamais une agence assignée manuellement : seules les agences que le plugin a lui-même liées peuvent être retirées (lors d'un changement de société)
 - ✅ Journalisation dans les logs GestSup (`tlogs`) de chaque création/modification/suppression
 
 ### Prérequis
@@ -276,23 +281,28 @@ sequenceDiagram
     GS->>PL: azure_ad_auth_success hook
     PL->>PL: Looks up companyName in tentra_company_agency
     alt mapping found
-        PL->>GS: Adds the mapped agency (tusers_agencies)
+        PL->>PL: Compares against the agency linked at last login (tentra_company_agency_sync)
+        opt company changed since last login
+            PL->>GS: Removes the old agency (tusers_agencies)
+        end
+        PL->>GS: Adds the new agency if missing (tusers_agencies)
     else no mapping
         PL-->>GS: No-op
     end
     GS-->>U: GestSup login complete
 ```
 
-The plugin **never removes** an agency already linked to the user: it only adds missing links, never replaces existing ones.
+The plugin only ever touches **what it linked itself**: an agency assigned manually by an admin is never removed. But if a user's Entra ID company changes (e.g. moves to a different "maison"), the agency the plugin added on a previous login is removed in favor of the new one — the user doesn't end up with both. This "which agency did I add for this user" bookkeeping lives in `tentra_company_agency_sync`.
 
 ### Features
 
 - ✅ Automatic Entra ID company → GestSup agency link on every SSO login
+- ✅ Tracks company changes: switching company removes the plugin-linked agency and adds the new one
 - ✅ Dedicated admin page (list, add, edit, delete mappings)
 - ✅ Dropdown of companies already known to GestSup (`tcompany`) — no free-text field, no typos
 - ✅ Install/uninstall/enable through the standard **Administration > Parameters > Plugins** screen
 - ✅ Bilingual **French / English** UI, follows the logged-in user's language
-- ✅ Non-destructive: only adds missing associations, never edits or deletes existing user data
+- ✅ Never touches a manually-assigned agency: only agencies the plugin linked itself can be removed (on a company change)
 - ✅ Every create/update/delete is logged to GestSup's own log table (`tlogs`)
 
 ### Requirements
