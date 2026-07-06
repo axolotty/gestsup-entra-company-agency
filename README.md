@@ -101,7 +101,7 @@ Le plugin **n'enlève jamais** une agence déjà associée à l'utilisateur : il
 │           ├── install.sql            # Créé la table + enregistre le plugin
 │           └── uninstall.sql          # Supprime la table + désenregistre le plugin
 ├── core-patch/                        # 3 lignes à appliquer au cœur GestSup (voir plus bas)
-│   ├── install.sh                     # Applique les 3 diffs automatiquement (recommandé)
+│   ├── install.sh                     # Applique les 3 diffs + (optionnel) le SQL du plugin
 │   ├── plugin.php.diff
 │   ├── azure_ad_auth.php.diff
 │   └── azure_ad_auth2.php.diff
@@ -135,9 +135,21 @@ Le plugin **n'enlève jamais** une agence déjà associée à l'utilisateur : il
 
    **Manuelle** : voir le détail des 3 lignes à ajouter [plus bas](#le-patch-core-3-lignes), ou appliquez les fichiers `.diff` vous-même avec `patch -p1 < core-patch/xxx.diff` depuis la racine de GestSup.
 
-3. Dans GestSup, aller dans **Administration > Paramètres > Plugins > Store**. L'installation (création de la table `tentra_company_agency` + enregistrement du plugin) se fait **automatiquement** au chargement de cette page.
+3. **Installer le SQL du plugin** (table `tentra_company_agency` + enregistrement dans `tplugins`) — GestSup ne propose **aucune page "Store" qui fait cela automatiquement**, il faut le faire explicitement, par l'une de ces deux méthodes :
 
-4. Aller dans l'onglet du plugin ("Sociétés Entra ID"), cocher **Activer le plugin**, valider.
+   **Via `install.sh`** (recommandé, idempotent — sans risque de le relancer) : passez les identifiants de connexion à la base en plus du chemin GestSup, et le script applique le patch core *et* le SQL en une seule commande :
+   ```bash
+   ./core-patch/install.sh /chemin/vers/gestsup --db-name bsup --db-user gestsup
+   # invite le mot de passe interactivement ; ou --db-pass '...' pour un usage non interactif
+   # --db-host / --db-port optionnels (défaut : localhost / 3306)
+   ```
+
+   **Manuelle** :
+   ```bash
+   mysql -u <user> -p <database> < plugin/entra_company_agency/_SQL/install.sql
+   ```
+
+4. Dans GestSup, aller dans **Administration > Paramètres > Plugins**, ouvrir l'onglet du plugin ("Sociétés Entra ID"), cocher **Activer le plugin**, valider.
 
 5. Le lien **Sociétés Entra ID** apparaît dans le menu principal (visible uniquement par les profils Administrateur).
 
@@ -206,6 +218,7 @@ Retirez ensuite les 3 lignes de patch core (ou laissez-les : elles sont inertes 
 | Le bouton "Désinstaller" échoue avec une erreur de droits | Le process PHP (souvent `www-data`) n'a pas les droits d'écriture sur `plugins/` (bonne pratique en prod) | Désinstaller manuellement en SSH (voir ci-dessus) |
 | L'agence ne se lie pas à la connexion SSO | `companyName` Entra ID ne correspond pas **exactement** (au caractère près) à la société sélectionnée dans le plugin | Vérifier la valeur exacte dans le profil Microsoft 365 de l'utilisateur |
 | Rien ne se passe, plugin activé, mapping correct | Le plugin est peut-être désactivé (`tplugins.enable=0`) | Vérifier l'onglet Plugins dans Administration |
+| Le menu "Sociétés Entra ID" n'apparaît jamais, table `tentra_company_agency` absente | Le SQL du plugin n'a jamais été installé — GestSup n'a **aucune page qui le fait automatiquement** | Lancer `install.sh` avec `--db-name`/`--db-user`, ou exécuter `_SQL/install.sql` à la main (voir [Installation](#installation)) |
 
 ### Sécurité
 
@@ -309,7 +322,7 @@ The plugin **never removes** an agency already linked to the user: it only adds 
 │           ├── install.sql            # Creates the table + registers the plugin
 │           └── uninstall.sql          # Drops the table + unregisters the plugin
 ├── core-patch/                        # 3 lines to apply to GestSup core (see below)
-│   ├── install.sh                     # Applies the 3 diffs automatically (recommended)
+│   ├── install.sh                     # Applies the 3 diffs + (optional) the plugin's SQL
 │   ├── plugin.php.diff
 │   ├── azure_ad_auth.php.diff
 │   └── azure_ad_auth2.php.diff
@@ -343,9 +356,21 @@ The plugin **never removes** an agency already linked to the user: it only adds 
 
    **Manual**: see the 3 lines to add [below](#the-core-patch-3-lines), or apply the `.diff` files yourself with `patch -p1 < core-patch/xxx.diff` from the GestSup root.
 
-3. In GestSup, go to **Administration > Parameters > Plugins > Store**. Installation (creates the `tentra_company_agency` table + registers the plugin) happens **automatically** when that page loads.
+3. **Install the plugin's SQL** (the `tentra_company_agency` table + its `tplugins` row) — GestSup has **no "Store" page that does this automatically**, it has to be run explicitly, either way:
 
-4. Open the plugin's own tab ("Entra ID Companies"), check **Enable plugin**, submit.
+   **Via `install.sh`** (recommended, idempotent — safe to re-run): pass DB credentials alongside the GestSup path and the script applies the core patch *and* the SQL in one command:
+   ```bash
+   ./core-patch/install.sh /path/to/gestsup --db-name bsup --db-user gestsup
+   # prompts for the password interactively; or --db-pass '...' for non-interactive use
+   # --db-host / --db-port are optional (default: localhost / 3306)
+   ```
+
+   **Manual**:
+   ```bash
+   mysql -u <user> -p <database> < plugin/entra_company_agency/_SQL/install.sql
+   ```
+
+4. In GestSup, go to **Administration > Parameters > Plugins**, open the plugin's own tab ("Entra ID Companies"), check **Enable plugin**, submit.
 
 5. The **Entra ID Companies** link appears in the main menu (Administrator profiles only).
 
@@ -414,6 +439,7 @@ Then remove the 3 core patch lines (or leave them — they're inert without the 
 | "Uninstall" fails with a permissions error | The PHP process (often `www-data`) has no write access to `plugins/` (a good production practice) | Uninstall manually over SSH (see above) |
 | Agency doesn't get linked on SSO login | Entra ID's `companyName` doesn't match the selected company **exactly** | Check the exact value in the user's Microsoft 365 profile |
 | Nothing happens, plugin enabled, mapping correct | Plugin might actually be disabled (`tplugins.enable=0`) | Check the Plugins tab in Administration |
+| "Entra ID Companies" menu never shows up, `tentra_company_agency` table missing | The plugin's SQL was never installed — GestSup has **no page that does this automatically** | Run `install.sh` with `--db-name`/`--db-user`, or run `_SQL/install.sql` by hand (see [Installation](#installation-1)) |
 
 ### Security
 
