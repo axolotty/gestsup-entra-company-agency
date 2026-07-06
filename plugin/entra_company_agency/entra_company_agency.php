@@ -8,6 +8,9 @@
 //prevent direct access
 if(!isset($_SESSION['user_id'])) {header('HTTP/1.0 403 Forbidden'); exit;}
 
+//reuse the same sync logic the SSO login hook uses (function is guarded by function_exists)
+require_once(__DIR__.'/azure_ad_auth_success.php');
+
 //load plugin locale (fallback to French if the user's language isn't translated)
 if(file_exists(__DIR__.'/locale/'.$ruser['language'].'.php')) {
 	require_once(__DIR__.'/locale/'.$ruser['language'].'.php');
@@ -61,12 +64,38 @@ if($_GET['action']=='delete' && $_GET['id'])
 	echo DisplayMessage('success',_lang_eca_msg_deleted);
 }
 
+//apply the mappings to all existing users right now, instead of waiting for their next SSO
+//login — GestSup's own Entra ID directory sync already keeps tusers.company up to date
+if($_GET['action']=='sync_all')
+{
+	$qry=$db->prepare("
+		SELECT `u`.`id` AS `user_id`, `c`.`name` AS `company_name`
+		FROM `tusers` `u`
+		INNER JOIN `tcompany` `c` ON `c`.`id`=`u`.`company`
+		WHERE `u`.`company`!=0 AND `u`.`disable`='0'
+	");
+	$qry->execute();
+	$users=$qry->fetchAll();
+	$qry->closeCursor();
+
+	$matched=0;
+	foreach($users as $u)
+	{
+		$company_name=trim(html_entity_decode($u['company_name'], ENT_QUOTES, 'UTF-8'));
+		if(gs_sync_user_agency_from_entra_company($db, $u['user_id'], $company_name)) {$matched++;}
+	}
+
+	logit('admin','Synchronisation manuelle des agences Entra ID : '.count($users).' utilisateur(s) examiné(s), '.$matched.' correspondance(s) trouvée(s)',$_SESSION['user_id']);
+	echo DisplayMessage('success',sprintf(_lang_eca_msg_sync_done,count($users),$matched));
+}
+
 echo '
 <div class="page-header position-relative">
 	<h1 class="page-title text-primary-m2">
 		<i class="fa fa-building text-primary-m2"></i>
 		'._lang_eca_page_title.'
 	</h1>
+	<a href="./index.php?page=plugins/entra_company_agency/entra_company_agency&amp;action=sync_all" class="btn btn-secondary position-absolute" style="top:0;right:0;" onclick="return confirm(\''._lang_eca_confirm_sync.'\');" title="'._lang_eca_sync_hint.'"><i class="fa fa-sync"></i> '._lang_eca_btn_sync_now.'</a>
 </div>
 <div class="card bcard bgc-transparent shadow">
 	<div class="card-body p-3">

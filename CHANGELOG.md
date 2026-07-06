@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2] — 2026-07-06
+
+### FR
+- Nouveau bouton **Synchroniser maintenant** sur la page du plugin : applique toutes les correspondances société ↔ agence aux utilisateurs existants immédiatement, sans attendre leur prochaine connexion SSO. S'appuie sur `tusers.company`, déjà tenu à jour par la synchronisation d'annuaire Entra ID native de GestSup.
+- Réutilise exactement la même logique de synchronisation que le hook de connexion SSO : une agence assignée manuellement n'est jamais retirée.
+
+### EN
+- New **Sync now** button on the plugin page: applies every company ↔ agency mapping to existing users immediately, without waiting for their next SSO login. Relies on `tusers.company`, already kept up to date by GestSup's own Entra ID directory sync.
+- Reuses the exact same sync logic as the SSO login hook: a manually-assigned agency is never removed.
+
 ## [1.1] — 2026-07-06
 
 ### FR

@@ -4,8 +4,11 @@
 #################################<br />
 # @Name :  Plugin Release Notes   <br />
 # @Date : 06/07/2026             <br />
-# @Version : 1.1    	 	     <br />
+# @Version : 1.2    	 	     <br />
 #################################<br />
+<br />
+<u>Version 1.2 :</u><br />
+- Ajoute un bouton "Synchroniser maintenant" pour appliquer les correspondances aux utilisateurs existants sans attendre leur prochaine connexion SSO<br />
 <br />
 <u>Version 1.1 :</u><br />
 - Suit les changements de société : un changement de maison retire l'agence précédemment liée par le plugin et ajoute la nouvelle, sans jamais toucher une agence assignée manuellement<br />

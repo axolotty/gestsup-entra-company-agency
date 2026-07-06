@@ -72,6 +72,7 @@ Le plugin ne touche **que ce qu'il a lui-même lié** : une agence assignée man
 
 - ✅ Association automatique société Entra ID → agence GestSup à chaque connexion SSO
 - ✅ Suit les changements de société : un changement de maison retire l'ancienne agence liée par le plugin et ajoute la nouvelle
+- ✅ Bouton "Synchroniser maintenant" : applique les correspondances à tous les utilisateurs existants sans attendre leur prochaine connexion SSO
 - ✅ Page d'administration dédiée (liste, ajout, modification, suppression des correspondances)
 - ✅ Liste déroulante des sociétés déjà connues de GestSup (`tcompany`) — pas de saisie libre source de fautes de frappe
 - ✅ Installation/désinstallation/activation via l'interface standard **Administration > Paramètres > Plugins**
@@ -171,6 +172,8 @@ Depuis la page **Sociétés Entra ID** :
 À la prochaine connexion SSO d'un utilisateur dont l'attribut `companyName` Entra ID correspond exactement à la société choisie, l'agence est automatiquement ajoutée à son profil GestSup.
 
 > 💡 **Astuce** : l'attribut `companyName` doit correspondre **exactement** (texte brut, sensible à l'orthographe) à ce que vous sélectionnez. En cas de doute sur la valeur exacte envoyée par Entra ID, vérifiez le profil Microsoft 365 de l'utilisateur (Centre d'administration > Utilisateurs > Profil > Société).
+
+**Utilisateurs déjà existants** : pas besoin d'attendre qu'ils se reconnectent. Le bouton **Synchroniser maintenant**, en haut de la page du plugin, applique immédiatement toutes les correspondances à l'ensemble des utilisateurs existants, à partir de la société déjà connue de GestSup pour chacun (`tusers.company`, alimentée par la synchronisation d'annuaire Entra ID de GestSup — indépendante des connexions SSO individuelles). Une agence assignée manuellement n'est jamais retirée par cette synchronisation.
 
 ### Le patch core (3 lignes)
 
@@ -298,6 +301,7 @@ The plugin only ever touches **what it linked itself**: an agency assigned manua
 
 - ✅ Automatic Entra ID company → GestSup agency link on every SSO login
 - ✅ Tracks company changes: switching company removes the plugin-linked agency and adds the new one
+- ✅ "Sync now" button: applies the mappings to all existing users without waiting for their next SSO login
 - ✅ Dedicated admin page (list, add, edit, delete mappings)
 - ✅ Dropdown of companies already known to GestSup (`tcompany`) — no free-text field, no typos
 - ✅ Install/uninstall/enable through the standard **Administration > Parameters > Plugins** screen
@@ -397,6 +401,8 @@ From the **Entra ID Companies** page:
 On the next SSO login of a user whose Entra ID `companyName` matches the selected company exactly, the agency is automatically added to their GestSup profile.
 
 > 💡 **Tip**: `companyName` must match **exactly** (plain text, case-sensitive) what you select. If unsure of the exact value Entra ID sends, check the user's Microsoft 365 profile (Admin center > Users > Profile > Company name).
+
+**Already-existing users**: no need to wait for them to log back in. The **Sync now** button at the top of the plugin page immediately applies every mapping to all existing users, based on the company GestSup already knows for each of them (`tusers.company`, kept up to date by GestSup's own Entra ID directory sync — independent of individual SSO logins). A manually-assigned agency is never removed by this sync.
 
 ### The core patch (3 lines)
 
