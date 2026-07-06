@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3] — 2026-07-06
+
+### FR
+- Nouveau patch core optionnel (`core-patch/core/azure_ad.php.diff`) : désactive la réactivation automatique des comptes par la synchronisation d'annuaire Entra ID native de GestSup. Les désactivations automatiques (compte désactivé ou absent d'Entra ID) continuent de fonctionner ; seule la réactivation automatique est neutralisée, pour éviter que des boîtes partagées/génériques désactivées à dessein ne redeviennent des comptes actifs.
+- `install.sh` applique désormais 4 patchs (au lieu de 3) et gère les fichiers cibles dans des sous-dossiers (`core/...`).
+- Correction d'un bug dans `install.sh` : la sauvegarde d'un fichier cible situé dans un sous-dossier échouait faute de création du sous-dossier correspondant dans le répertoire de backup.
+
+### EN
+- New optional core patch (`core-patch/core/azure_ad.php.diff`): disables automatic account re-enabling in GestSup's native Entra ID directory sync. Automatic disabling (account disabled or removed from Entra ID) keeps working; only auto re-enabling is neutralized, so shared/generic mailboxes disabled on purpose don't silently become active accounts again.
+- `install.sh` now applies 4 patches (up from 3) and supports target files nested in subdirectories (`core/...`).
+- Fixed a bug in `install.sh`: backing up a target file located in a subdirectory failed because the matching subdirectory wasn't created under the backup directory.
+
 ## [1.2] — 2026-07-06
 
 ### FR

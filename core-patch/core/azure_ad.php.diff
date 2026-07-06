@@ -1,0 +1,15 @@
+diff --git a/core/azure_ad.php b/core/azure_ad.php
+index 418f8ee..010ba12 100644
+--- a/core/azure_ad.php
++++ b/core/azure_ad.php
+@@ -694,7 +694,9 @@ if($rparameters['azure_ad'])
+                                     }
+                                 }
+                                 //enable GestSup user if GestSup user id disabled and Entra ID is enable
+-                                if($rparameters['azure_ad_disable_user'] && $AzureUser['enable'] && $GestsupUser['disable'])
++                                //never auto re-enable: a GestSup account disabled on purpose (many are shared/generic
++                                //mailboxes, not real technicians) must stay disabled until an admin re-enables it manually
++                                if(false && $rparameters['azure_ad_disable_user'] && $AzureUser['enable'] && $GestsupUser['disable'])
+                                 {
+                                     $user_to_enable++;
+                                     echo '<i class="fa fa-check-circle text-success"></i> <i class="fa fa-user text-success"></i> '.T_("Activation de l'utilisateur").' '.$AzureUser['upn'].' '.T_("car désactivé sur GestSup et activé sur Entra ID").'<br />';

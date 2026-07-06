@@ -6,11 +6,18 @@
 #   ./install.sh /path/to/gestsup
 #   ./install.sh /path/to/gestsup --db-name bsup --db-user gestsup [--db-pass '...'] [--db-host localhost] [--db-port 3306]
 #
-# What it does, for each of plugin.php, azure_ad_auth.php, azure_ad_auth2.php:
+# What it does, for each of plugin.php, azure_ad_auth.php, azure_ad_auth2.php,
+# core/azure_ad.php:
 #   1. Skips the file if the patch marker is already present (safe to re-run)
 #   2. Backs up the original file
 #   3. Applies the corresponding .diff with `patch -p1`
 #   4. Verifies the result with `php -l` and rolls back automatically on failure
+#
+# core/azure_ad.php's patch disables GestSup's own auto-re-enable-user behavior
+# in its Entra ID directory sync: a GestSup account disabled on purpose should
+# stay disabled even if Entra ID shows it as enabled (many disabled accounts
+# are shared/generic mailboxes, not real technicians). Accounts still get
+# auto-disabled as before if Entra ID shows them disabled or removed.
 #
 # If --db-name and --db-user are given, it then also runs the plugin's own
 # _SQL/install.sql (creates `tentra_company_agency` + registers the plugin in
@@ -69,10 +76,10 @@ if [ -n "$DB_NAME" ] && ! command -v mysql >/dev/null 2>&1; then
 fi
 
 BACKUP_DIR="$GESTSUP_DIR/../gestsup_core_backup_$(date +%Y%m%d_%H%M%S)"
-MARKER="azure_ad_auth_success"
 
 apply_one() {
 	local relative_file="$1"
+	local marker="$2"
 	local diff_file="$SCRIPT_DIR/$relative_file.diff"
 	local target="$GESTSUP_DIR/$relative_file"
 
@@ -81,12 +88,12 @@ apply_one() {
 		exit 1
 	fi
 
-	if grep -q "$MARKER" "$target" 2>/dev/null; then
+	if grep -q "$marker" "$target" 2>/dev/null; then
 		echo "SKIP  $relative_file (already patched)"
 		return
 	fi
 
-	mkdir -p "$BACKUP_DIR"
+	mkdir -p "$(dirname "$BACKUP_DIR/$relative_file")"
 	cp "$target" "$BACKUP_DIR/$relative_file"
 
 	if (cd "$GESTSUP_DIR" && patch -p1 --quiet --no-backup-if-mismatch --ignore-whitespace < "$diff_file"); then
@@ -152,9 +159,10 @@ install_sql() {
 echo "Patching GestSup core in: $GESTSUP_DIR"
 echo
 
-apply_one "plugin.php"
-apply_one "azure_ad_auth.php"
-apply_one "azure_ad_auth2.php"
+apply_one "plugin.php" "azure_ad_auth_success"
+apply_one "azure_ad_auth.php" "azure_ad_auth_success"
+apply_one "azure_ad_auth2.php" "azure_ad_auth_success"
+apply_one "core/azure_ad.php" "never auto re-enable"
 
 echo
 

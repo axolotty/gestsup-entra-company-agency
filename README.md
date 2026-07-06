@@ -106,11 +106,13 @@ Le plugin ne touche **que ce qu'il a lui-même lié** : une agence assignée man
 │       └── _SQL/
 │           ├── install.sql            # Créé la table + enregistre le plugin
 │           └── uninstall.sql          # Supprime la table + désenregistre le plugin
-├── core-patch/                        # 3 lignes à appliquer au cœur GestSup (voir plus bas)
-│   ├── install.sh                     # Applique les 3 diffs + (optionnel) le SQL du plugin
+├── core-patch/                        # patches à appliquer au cœur GestSup (voir plus bas)
+│   ├── install.sh                     # Applique les diffs + (optionnel) le SQL du plugin
 │   ├── plugin.php.diff
 │   ├── azure_ad_auth.php.diff
-│   └── azure_ad_auth2.php.diff
+│   ├── azure_ad_auth2.php.diff
+│   └── core/
+│       └── azure_ad.php.diff          # Désactive la réactivation auto des comptes (voir plus bas)
 └── README.md
 ```
 
@@ -205,6 +207,25 @@ GestSup ne propose pas nativement de point d'extension ("hook") à l'endroit exa
 </details>
 
 Les diffs complets sont dans [`core-patch/`](core-patch/). Ces lignes n'embarquent **aucune logique métier** : toute la logique vit dans le plugin, qui survit intact aux mises à jour de GestSup. Seul ce patch de 3 lignes doit être réappliqué après une mise à jour du cœur GestSup (quelques minutes).
+
+### Patch optionnel : ne jamais réactiver un compte automatiquement
+
+Indépendamment du hook ci-dessus, `core-patch/core/azure_ad.php.diff` modifie la synchronisation d'annuaire Entra ID native de GestSup (Administration > Synchronisation Entra ID). Par défaut, quand le paramètre `azure_ad_disable_user` est actif, cette synchronisation fait trois choses à la fois :
+1. désactive un utilisateur GestSup si son compte Entra ID est désactivé,
+2. désactive un utilisateur GestSup si son compte n'existe plus du tout dans Entra ID,
+3. **réactive** un utilisateur GestSup désactivé si son compte Entra ID est actif.
+
+GestSup ne permet pas de dissocier ces trois comportements : c'est tout ou rien. Beaucoup de comptes désactivés manuellement dans GestSup sont en réalité des boîtes partagées/génériques (`facture*@`, `licence*@`, `debiteur*@`...) qui ne doivent jamais devenir des comptes techniciens actifs, même si leur boîte Entra ID reste active. Ce patch neutralise uniquement le comportement n°3 (`if(false && ...)`) : les désactivations automatiques (1 et 2) continuent de fonctionner normalement, mais plus aucun compte n'est jamais réactivé automatiquement — seul un administrateur peut le faire à la main.
+
+```diff
+ //enable GestSup user if GestSup user id disabled and Entra ID is enable
++//never auto re-enable: a GestSup account disabled on purpose (many are shared/generic
++//mailboxes, not real technicians) must stay disabled until an admin re-enables it manually
+-if($rparameters['azure_ad_disable_user'] && $AzureUser['enable'] && $GestsupUser['disable'])
++if(false && $rparameters['azure_ad_disable_user'] && $AzureUser['enable'] && $GestsupUser['disable'])
+```
+
+Ce patch est appliqué automatiquement par `install.sh` en même temps que les 3 autres.
 
 ### Désinstallation
 
@@ -335,11 +356,13 @@ The plugin only ever touches **what it linked itself**: an agency assigned manua
 │       └── _SQL/
 │           ├── install.sql            # Creates the table + registers the plugin
 │           └── uninstall.sql          # Drops the table + unregisters the plugin
-├── core-patch/                        # 3 lines to apply to GestSup core (see below)
-│   ├── install.sh                     # Applies the 3 diffs + (optional) the plugin's SQL
+├── core-patch/                        # patches to apply to GestSup core (see below)
+│   ├── install.sh                     # Applies the diffs + (optional) the plugin's SQL
 │   ├── plugin.php.diff
 │   ├── azure_ad_auth.php.diff
-│   └── azure_ad_auth2.php.diff
+│   ├── azure_ad_auth2.php.diff
+│   └── core/
+│       └── azure_ad.php.diff          # Disables auto re-enabling of accounts (see below)
 └── README.md
 ```
 
@@ -434,6 +457,25 @@ GestSup has no built-in extension point ("hook") at the exact spot where the Ent
 </details>
 
 Full diffs are in [`core-patch/`](core-patch/). These lines carry **no business logic** — everything lives in the plugin, which survives GestSup core updates untouched. Only this 3-line patch needs reapplying after a GestSup core update (a couple of minutes).
+
+### Optional patch: never auto re-enable an account
+
+Separate from the hook above, `core-patch/core/azure_ad.php.diff` changes GestSup's own native Entra ID directory sync (Administration > Entra ID Sync). By default, when the `azure_ad_disable_user` parameter is on, that sync does three things at once:
+1. disables a GestSup user if their Entra ID account is disabled,
+2. disables a GestSup user if their account no longer exists in Entra ID at all,
+3. **re-enables** a disabled GestSup user if their Entra ID account is active.
+
+GestSup doesn't let you split these apart — it's all or nothing. Many accounts disabled by hand in GestSup are actually shared/generic mailboxes (`facture*@`, `licence*@`, `debiteur*@`...) that should never become active technician accounts again, even if their Entra ID mailbox stays enabled. This patch neutralizes only behavior #3 (`if(false && ...)`): the automatic disabling (#1 and #2) keeps working exactly as before, but no account is ever re-enabled automatically — only an admin can do that by hand.
+
+```diff
+ //enable GestSup user if GestSup user id disabled and Entra ID is enable
++//never auto re-enable: a GestSup account disabled on purpose (many are shared/generic
++//mailboxes, not real technicians) must stay disabled until an admin re-enables it manually
+-if($rparameters['azure_ad_disable_user'] && $AzureUser['enable'] && $GestsupUser['disable'])
++if(false && $rparameters['azure_ad_disable_user'] && $AzureUser['enable'] && $GestsupUser['disable'])
+```
+
+This patch is applied automatically by `install.sh` alongside the other 3.
 
 ### Uninstalling
 
