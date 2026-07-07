@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏢 GestSup — Entra ID Company ↔ Agency
+# 🏢 GestSup - Entra ID Company ↔ Agency
 
 **Plugin GestSup qui associe automatiquement l'agence d'un utilisateur à sa société Microsoft Entra ID (Azure AD) lors de la connexion SSO Office 365.**
 **GestSup plugin that automatically links a user's agency to their Microsoft Entra ID (Azure AD) company on Office 365 SSO login.**
@@ -66,7 +66,7 @@ sequenceDiagram
     GS-->>U: Connexion GestSup terminée
 ```
 
-Le plugin ne touche **que ce qu'il a lui-même lié** : une agence assignée manuellement par un administrateur n'est jamais retirée. En revanche, si la société Entra ID d'un utilisateur change (changement de maison), l'agence que le plugin avait ajoutée lors d'une connexion précédente est retirée au profit de la nouvelle — l'utilisateur ne se retrouve pas avec les deux à la fois. Cette correspondance "quelle agence ai-je ajoutée pour cet utilisateur" est gardée dans `tentra_company_agency_sync`.
+Le plugin ne touche **que ce qu'il a lui-même lié** : une agence assignée manuellement par un administrateur n'est jamais retirée. En revanche, si la société Entra ID d'un utilisateur change (changement de maison), l'agence que le plugin avait ajoutée lors d'une connexion précédente est retirée au profit de la nouvelle - l'utilisateur ne se retrouve pas avec les deux à la fois. Cette correspondance "quelle agence ai-je ajoutée pour cet utilisateur" est gardée dans `tentra_company_agency_sync`.
 
 ### Fonctionnalités
 
@@ -74,7 +74,7 @@ Le plugin ne touche **que ce qu'il a lui-même lié** : une agence assignée man
 - ✅ Suit les changements de société : un changement de maison retire l'ancienne agence liée par le plugin et ajoute la nouvelle
 - ✅ Bouton "Synchroniser maintenant" : applique les correspondances à tous les utilisateurs existants sans attendre leur prochaine connexion SSO
 - ✅ Page d'administration dédiée (liste, ajout, modification, suppression des correspondances)
-- ✅ Liste déroulante des sociétés déjà connues de GestSup (`tcompany`) — pas de saisie libre source de fautes de frappe
+- ✅ Liste déroulante des sociétés déjà connues de GestSup (`tcompany`) - pas de saisie libre source de fautes de frappe
 - ✅ Installation/désinstallation/activation via l'interface standard **Administration > Paramètres > Plugins**
 - ✅ Interface bilingue **Français / Anglais**, s'adapte à la langue de l'utilisateur connecté
 - ✅ Ne touche jamais une agence assignée manuellement : seules les agences que le plugin a lui-même liées peuvent être retirées (lors d'un changement de société)
@@ -127,7 +127,7 @@ Le plugin ne touche **que ce qu'il a lui-même lié** : une agence assignée man
    ```
    *(adaptez utilisateur/groupe et permissions à votre configuration serveur)*
 
-2. **Appliquer le patch core** — deux méthodes possibles :
+2. **Appliquer le patch core** - deux méthodes possibles :
 
    **Automatique (recommandé)** : le script détecte si le patch est déjà appliqué (sans risque de le faire deux fois), sauvegarde chaque fichier avant modification, et annule automatiquement si un fichier ne correspond pas à ce qui est attendu (version de GestSup trop différente) :
    ```bash
@@ -143,9 +143,9 @@ Le plugin ne touche **que ce qu'il a lui-même lié** : une agence assignée man
 
    **Manuelle** : voir le détail des 3 lignes à ajouter [plus bas](#le-patch-core-3-lignes), ou appliquez les fichiers `.diff` vous-même avec `patch -p1 < core-patch/xxx.diff` depuis la racine de GestSup.
 
-3. **Installer le SQL du plugin** (table `tentra_company_agency` + enregistrement dans `tplugins`) — GestSup ne propose **aucune page "Store" qui fait cela automatiquement**, il faut le faire explicitement, par l'une de ces deux méthodes :
+3. **Installer le SQL du plugin** (table `tentra_company_agency` + enregistrement dans `tplugins`) - GestSup ne propose **aucune page "Store" qui fait cela automatiquement**, il faut le faire explicitement, par l'une de ces deux méthodes :
 
-   **Via `install.sh`** (recommandé, idempotent — sans risque de le relancer) : passez les identifiants de connexion à la base en plus du chemin GestSup, et le script applique le patch core *et* le SQL en une seule commande :
+   **Via `install.sh`** (recommandé, idempotent - sans risque de le relancer) : passez les identifiants de connexion à la base en plus du chemin GestSup, et le script applique le patch core *et* le SQL en une seule commande :
    ```bash
    ./core-patch/install.sh /chemin/vers/gestsup --db-name bsup --db-user gestsup
    # invite le mot de passe interactivement ; ou --db-pass '...' pour un usage non interactif
@@ -161,7 +161,7 @@ Le plugin ne touche **que ce qu'il a lui-même lié** : une agence assignée man
 
 5. Le lien **Sociétés Entra ID** apparaît dans le menu principal (visible uniquement par les profils Administrateur).
 
-> ⚠️ Pour pouvoir **installer/désinstaller** un plugin directement depuis l'interface web (téléchargement, suppression de fichiers), le processus PHP doit avoir les droits d'écriture sur le dossier `plugins/`. Si ce n'est pas le cas (configuration recommandée en production, cf. [Sécurité](#sécurité)), l'installation initiale des fichiers et la désinstallation se font manuellement en SSH/SFTP — seule l'activation/désactivation (simple bascule en base) fonctionne toujours depuis l'UI.
+> ⚠️ Pour pouvoir **installer/désinstaller** un plugin directement depuis l'interface web (téléchargement, suppression de fichiers), le processus PHP doit avoir les droits d'écriture sur le dossier `plugins/`. Si ce n'est pas le cas (configuration recommandée en production, cf. [Sécurité](#sécurité)), l'installation initiale des fichiers et la désinstallation se font manuellement en SSH/SFTP - seule l'activation/désactivation (simple bascule en base) fonctionne toujours depuis l'UI.
 
 ### Utilisation
 
@@ -175,11 +175,11 @@ Depuis la page **Sociétés Entra ID** :
 
 > 💡 **Astuce** : l'attribut `companyName` doit correspondre **exactement** (texte brut, sensible à l'orthographe) à ce que vous sélectionnez. En cas de doute sur la valeur exacte envoyée par Entra ID, vérifiez le profil Microsoft 365 de l'utilisateur (Centre d'administration > Utilisateurs > Profil > Société).
 
-**Utilisateurs déjà existants** : pas besoin d'attendre qu'ils se reconnectent. Le bouton **Synchroniser maintenant**, en haut de la page du plugin, applique immédiatement toutes les correspondances à l'ensemble des utilisateurs existants, à partir de la société déjà connue de GestSup pour chacun (`tusers.company`, alimentée par la synchronisation d'annuaire Entra ID de GestSup — indépendante des connexions SSO individuelles). Une agence assignée manuellement n'est jamais retirée par cette synchronisation.
+**Utilisateurs déjà existants** : pas besoin d'attendre qu'ils se reconnectent. Le bouton **Synchroniser maintenant**, en haut de la page du plugin, applique immédiatement toutes les correspondances à l'ensemble des utilisateurs existants, à partir de la société déjà connue de GestSup pour chacun (`tusers.company`, alimentée par la synchronisation d'annuaire Entra ID de GestSup - indépendante des connexions SSO individuelles). Une agence assignée manuellement n'est jamais retirée par cette synchronisation.
 
 ### Le patch core (3 lignes)
 
-GestSup ne propose pas nativement de point d'extension ("hook") à l'endroit exact où le profil Entra ID est reçu après authentification SSO. Ce plugin ajoute ce point d'extension une bonne fois pour toutes — de façon **générique et réutilisable** par n'importe quel futur plugin, pas seulement celui-ci :
+GestSup ne propose pas nativement de point d'extension ("hook") à l'endroit exact où le profil Entra ID est reçu après authentification SSO. Ce plugin ajoute ce point d'extension une bonne fois pour toutes - de façon **générique et réutilisable** par n'importe quel futur plugin, pas seulement celui-ci :
 
 <details>
 <summary><strong>plugin.php</strong> (registre central des hooks GestSup)</summary>
@@ -215,7 +215,7 @@ Indépendamment du hook ci-dessus, `core-patch/core/azure_ad.php.diff` modifie l
 2. désactive un utilisateur GestSup si son compte n'existe plus du tout dans Entra ID,
 3. **réactive** un utilisateur GestSup désactivé si son compte Entra ID est actif.
 
-GestSup ne permet pas de dissocier ces trois comportements : c'est tout ou rien. Beaucoup de comptes désactivés manuellement dans GestSup sont en réalité des boîtes partagées/génériques (`facture*@`, `licence*@`, `debiteur*@`...) qui ne doivent jamais devenir des comptes techniciens actifs, même si leur boîte Entra ID reste active. Ce patch neutralise uniquement le comportement n°3 (`if(false && ...)`) : les désactivations automatiques (1 et 2) continuent de fonctionner normalement, mais plus aucun compte n'est jamais réactivé automatiquement — seul un administrateur peut le faire à la main.
+GestSup ne permet pas de dissocier ces trois comportements : c'est tout ou rien. Beaucoup de comptes désactivés manuellement dans GestSup sont en réalité des boîtes partagées/génériques (`facture*@`, `licence*@`, `debiteur*@`...) qui ne doivent jamais devenir des comptes techniciens actifs, même si leur boîte Entra ID reste active. Ce patch neutralise uniquement le comportement n°3 (`if(false && ...)`) : les désactivations automatiques (1 et 2) continuent de fonctionner normalement, mais plus aucun compte n'est jamais réactivé automatiquement - seul un administrateur peut le faire à la main.
 
 ```diff
  //enable GestSup user if GestSup user id disabled and Entra ID is enable
@@ -242,16 +242,16 @@ Retirez ensuite les 3 lignes de patch core (ou laissez-les : elles sont inertes 
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
-| `PDOException: Query was empty` à l'ouverture de l'onglet Plugins | `install.sql`/`uninstall.sql` contient un caractère (souvent un retour à la ligne) après le dernier `;` — le parseur GestSup fait un simple `explode(";", ...)` sans nettoyage | Vérifier qu'aucun octet ne suit le dernier `;` du fichier SQL |
+| `PDOException: Query was empty` à l'ouverture de l'onglet Plugins | `install.sql`/`uninstall.sql` contient un caractère (souvent un retour à la ligne) après le dernier `;` - le parseur GestSup fait un simple `explode(";", ...)` sans nettoyage | Vérifier qu'aucun octet ne suit le dernier `;` du fichier SQL |
 | La page du plugin retombe sur "Gestion des utilisateurs" | Vous avez essayé de router la page via `admin&subpage=...` au lieu du système de page plugin (`page=plugins/...`) | Utiliser le hook `page_white_list`, pas la liste blanche `subpage` du cœur |
 | Le bouton "Désinstaller" échoue avec une erreur de droits | Le process PHP (souvent `www-data`) n'a pas les droits d'écriture sur `plugins/` (bonne pratique en prod) | Désinstaller manuellement en SSH (voir ci-dessus) |
 | L'agence ne se lie pas à la connexion SSO | `companyName` Entra ID ne correspond pas **exactement** (au caractère près) à la société sélectionnée dans le plugin | Vérifier la valeur exacte dans le profil Microsoft 365 de l'utilisateur |
 | Rien ne se passe, plugin activé, mapping correct | Le plugin est peut-être désactivé (`tplugins.enable=0`) | Vérifier l'onglet Plugins dans Administration |
-| Le menu "Sociétés Entra ID" n'apparaît jamais, table `tentra_company_agency` absente | Le SQL du plugin n'a jamais été installé — GestSup n'a **aucune page qui le fait automatiquement** | Lancer `install.sh` avec `--db-name`/`--db-user`, ou exécuter `_SQL/install.sql` à la main (voir [Installation](#installation)) |
+| Le menu "Sociétés Entra ID" n'apparaît jamais, table `tentra_company_agency` absente | Le SQL du plugin n'a jamais été installé - GestSup n'a **aucune page qui le fait automatiquement** | Lancer `install.sh` avec `--db-name`/`--db-user`, ou exécuter `_SQL/install.sql` à la main (voir [Installation](#installation)) |
 
 ### Sécurité
 
-- Toutes les requêtes SQL sont préparées (PDO, requêtes paramétrées) — aucune concaténation de valeurs utilisateur dans le SQL.
+- Toutes les requêtes SQL sont préparées (PDO, requêtes paramétrées) - aucune concaténation de valeurs utilisateur dans le SQL.
 - La page d'administration est protégée par `$rright['admin']` (droit administrateur GestSup requis).
 - Les valeurs affichées sont systématiquement échappées (`htmlspecialchars`) avant rendu HTML.
 - Aucune information sensible (secrets, jetons) n'est manipulée par ce plugin : il ne fait que lire `companyName` depuis la réponse Microsoft Graph déjà authentifiée par le connecteur SSO natif de GestSup.
@@ -259,11 +259,11 @@ Retirez ensuite les 3 lignes de patch core (ou laissez-les : elles sont inertes 
 ### Limitations connues
 
 - Le libellé et la description du plugin affichés dans l'onglet **Administration > Plugins** (table `tplugins`) restent en français : GestSup ne propose pas de mécanisme multilingue pour ces deux champs (le plugin de référence `availability` a la même limitation). Le **reste de l'interface** (menu, page, messages) est, lui, bilingue et suit la langue de l'utilisateur connecté.
-- La correspondance se fait par égalité stricte sur `companyName` — pas de tolérance à la casse ou aux accents. C'est un choix délibéré pour éviter les faux positifs.
+- La correspondance se fait par égalité stricte sur `companyName` - pas de tolérance à la casse ou aux accents. C'est un choix délibéré pour éviter les faux positifs.
 
 ### Changelog
 
-**1.0** — Version initiale : correspondance société Entra ID / agence, page d'administration, interface FR/EN.
+**1.0** - Version initiale : correspondance société Entra ID / agence, page d'administration, interface FR/EN.
 
 ---
 
@@ -316,7 +316,7 @@ sequenceDiagram
     GS-->>U: GestSup login complete
 ```
 
-The plugin only ever touches **what it linked itself**: an agency assigned manually by an admin is never removed. But if a user's Entra ID company changes (e.g. moves to a different "maison"), the agency the plugin added on a previous login is removed in favor of the new one — the user doesn't end up with both. This "which agency did I add for this user" bookkeeping lives in `tentra_company_agency_sync`.
+The plugin only ever touches **what it linked itself**: an agency assigned manually by an admin is never removed. But if a user's Entra ID company changes (e.g. moves to a different "maison"), the agency the plugin added on a previous login is removed in favor of the new one - the user doesn't end up with both. This "which agency did I add for this user" bookkeeping lives in `tentra_company_agency_sync`.
 
 ### Features
 
@@ -324,7 +324,7 @@ The plugin only ever touches **what it linked itself**: an agency assigned manua
 - ✅ Tracks company changes: switching company removes the plugin-linked agency and adds the new one
 - ✅ "Sync now" button: applies the mappings to all existing users without waiting for their next SSO login
 - ✅ Dedicated admin page (list, add, edit, delete mappings)
-- ✅ Dropdown of companies already known to GestSup (`tcompany`) — no free-text field, no typos
+- ✅ Dropdown of companies already known to GestSup (`tcompany`) - no free-text field, no typos
 - ✅ Install/uninstall/enable through the standard **Administration > Parameters > Plugins** screen
 - ✅ Bilingual **French / English** UI, follows the logged-in user's language
 - ✅ Never touches a manually-assigned agency: only agencies the plugin linked itself can be removed (on a company change)
@@ -377,7 +377,7 @@ The plugin only ever touches **what it linked itself**: an agency assigned manua
    ```
    *(adjust user/group/permissions to your server setup)*
 
-2. **Apply the core patch** — two options:
+2. **Apply the core patch** - two options:
 
    **Automatic (recommended)**: the script detects whether the patch is already applied (safe to re-run), backs up each file before touching it, and rolls back automatically if a file doesn't match what's expected (too different a GestSup version):
    ```bash
@@ -393,9 +393,9 @@ The plugin only ever touches **what it linked itself**: an agency assigned manua
 
    **Manual**: see the 3 lines to add [below](#the-core-patch-3-lines), or apply the `.diff` files yourself with `patch -p1 < core-patch/xxx.diff` from the GestSup root.
 
-3. **Install the plugin's SQL** (the `tentra_company_agency` table + its `tplugins` row) — GestSup has **no "Store" page that does this automatically**, it has to be run explicitly, either way:
+3. **Install the plugin's SQL** (the `tentra_company_agency` table + its `tplugins` row) - GestSup has **no "Store" page that does this automatically**, it has to be run explicitly, either way:
 
-   **Via `install.sh`** (recommended, idempotent — safe to re-run): pass DB credentials alongside the GestSup path and the script applies the core patch *and* the SQL in one command:
+   **Via `install.sh`** (recommended, idempotent - safe to re-run): pass DB credentials alongside the GestSup path and the script applies the core patch *and* the SQL in one command:
    ```bash
    ./core-patch/install.sh /path/to/gestsup --db-name bsup --db-user gestsup
    # prompts for the password interactively; or --db-pass '...' for non-interactive use
@@ -411,7 +411,7 @@ The plugin only ever touches **what it linked itself**: an agency assigned manua
 
 5. The **Entra ID Companies** link appears in the main menu (Administrator profiles only).
 
-> ⚠️ Installing/uninstalling a plugin directly from the web UI (downloading, deleting files) requires the PHP process to have write access to the `plugins/` folder. If it doesn't (recommended production setup, see [Security](#security)), the initial file deployment and uninstall must be done manually over SSH/SFTP — enabling/disabling (a simple DB flag) still works from the UI either way.
+> ⚠️ Installing/uninstalling a plugin directly from the web UI (downloading, deleting files) requires the PHP process to have write access to the `plugins/` folder. If it doesn't (recommended production setup, see [Security](#security)), the initial file deployment and uninstall must be done manually over SSH/SFTP - enabling/disabling (a simple DB flag) still works from the UI either way.
 
 ### Usage
 
@@ -425,11 +425,11 @@ On the next SSO login of a user whose Entra ID `companyName` matches the selecte
 
 > 💡 **Tip**: `companyName` must match **exactly** (plain text, case-sensitive) what you select. If unsure of the exact value Entra ID sends, check the user's Microsoft 365 profile (Admin center > Users > Profile > Company name).
 
-**Already-existing users**: no need to wait for them to log back in. The **Sync now** button at the top of the plugin page immediately applies every mapping to all existing users, based on the company GestSup already knows for each of them (`tusers.company`, kept up to date by GestSup's own Entra ID directory sync — independent of individual SSO logins). A manually-assigned agency is never removed by this sync.
+**Already-existing users**: no need to wait for them to log back in. The **Sync now** button at the top of the plugin page immediately applies every mapping to all existing users, based on the company GestSup already knows for each of them (`tusers.company`, kept up to date by GestSup's own Entra ID directory sync - independent of individual SSO logins). A manually-assigned agency is never removed by this sync.
 
 ### The core patch (3 lines)
 
-GestSup has no built-in extension point ("hook") at the exact spot where the Entra ID profile is received right after SSO authentication. This plugin adds that hook once and for all — as a **generic, reusable** extension point for any future plugin, not just this one:
+GestSup has no built-in extension point ("hook") at the exact spot where the Entra ID profile is received right after SSO authentication. This plugin adds that hook once and for all - as a **generic, reusable** extension point for any future plugin, not just this one:
 
 <details>
 <summary><strong>plugin.php</strong> (GestSup's central hook registry)</summary>
@@ -456,7 +456,7 @@ GestSup has no built-in extension point ("hook") at the exact spot where the Ent
 ```
 </details>
 
-Full diffs are in [`core-patch/`](core-patch/). These lines carry **no business logic** — everything lives in the plugin, which survives GestSup core updates untouched. Only this 3-line patch needs reapplying after a GestSup core update (a couple of minutes).
+Full diffs are in [`core-patch/`](core-patch/). These lines carry **no business logic** - everything lives in the plugin, which survives GestSup core updates untouched. Only this 3-line patch needs reapplying after a GestSup core update (a couple of minutes).
 
 ### Optional patch: never auto re-enable an account
 
@@ -465,7 +465,7 @@ Separate from the hook above, `core-patch/core/azure_ad.php.diff` changes GestSu
 2. disables a GestSup user if their account no longer exists in Entra ID at all,
 3. **re-enables** a disabled GestSup user if their Entra ID account is active.
 
-GestSup doesn't let you split these apart — it's all or nothing. Many accounts disabled by hand in GestSup are actually shared/generic mailboxes (`facture*@`, `licence*@`, `debiteur*@`...) that should never become active technician accounts again, even if their Entra ID mailbox stays enabled. This patch neutralizes only behavior #3 (`if(false && ...)`): the automatic disabling (#1 and #2) keeps working exactly as before, but no account is ever re-enabled automatically — only an admin can do that by hand.
+GestSup doesn't let you split these apart - it's all or nothing. Many accounts disabled by hand in GestSup are actually shared/generic mailboxes (`facture*@`, `licence*@`, `debiteur*@`...) that should never become active technician accounts again, even if their Entra ID mailbox stays enabled. This patch neutralizes only behavior #3 (`if(false && ...)`): the automatic disabling (#1 and #2) keeps working exactly as before, but no account is ever re-enabled automatically - only an admin can do that by hand.
 
 ```diff
  //enable GestSup user if GestSup user id disabled and Entra ID is enable
@@ -486,22 +486,22 @@ This patch is applied automatically by `install.sh` alongside the other 3.
 mysql -u <user> -p <database> < plugin/entra_company_agency/_SQL/uninstall.sql
 rm -rf /path/to/gestsup/plugins/entra_company_agency
 ```
-Then remove the 3 core patch lines (or leave them — they're inert without the plugin folder).
+Then remove the 3 core patch lines (or leave them - they're inert without the plugin folder).
 
 ### Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| `PDOException: Query was empty` when opening the Plugins tab | `install.sql`/`uninstall.sql` has a stray character (often a trailing newline) after the last `;` — GestSup's parser does a naive `explode(";", ...)` with no trimming | Make sure nothing follows the last `;` in the SQL file |
+| `PDOException: Query was empty` when opening the Plugins tab | `install.sql`/`uninstall.sql` has a stray character (often a trailing newline) after the last `;` - GestSup's parser does a naive `explode(";", ...)` with no trimming | Make sure nothing follows the last `;` in the SQL file |
 | The plugin page falls back to "User management" | You tried routing through `admin&subpage=...` instead of the plugin page system (`page=plugins/...`) | Use the `page_white_list` hook, not core's `subpage` whitelist |
 | "Uninstall" fails with a permissions error | The PHP process (often `www-data`) has no write access to `plugins/` (a good production practice) | Uninstall manually over SSH (see above) |
 | Agency doesn't get linked on SSO login | Entra ID's `companyName` doesn't match the selected company **exactly** | Check the exact value in the user's Microsoft 365 profile |
 | Nothing happens, plugin enabled, mapping correct | Plugin might actually be disabled (`tplugins.enable=0`) | Check the Plugins tab in Administration |
-| "Entra ID Companies" menu never shows up, `tentra_company_agency` table missing | The plugin's SQL was never installed — GestSup has **no page that does this automatically** | Run `install.sh` with `--db-name`/`--db-user`, or run `_SQL/install.sql` by hand (see [Installation](#installation-1)) |
+| "Entra ID Companies" menu never shows up, `tentra_company_agency` table missing | The plugin's SQL was never installed - GestSup has **no page that does this automatically** | Run `install.sh` with `--db-name`/`--db-user`, or run `_SQL/install.sql` by hand (see [Installation](#installation-1)) |
 
 ### Security
 
-- All SQL queries are parameterized (PDO prepared statements) — no user input is ever concatenated into SQL.
+- All SQL queries are parameterized (PDO prepared statements) - no user input is ever concatenated into SQL.
 - The admin page is gated by `$rright['admin']` (GestSup administrator right required).
 - All displayed values are escaped (`htmlspecialchars`) before HTML output.
 - No sensitive data (secrets, tokens) is handled by this plugin: it only reads `companyName` from the Microsoft Graph response already authenticated by GestSup's native SSO connector.
@@ -509,11 +509,11 @@ Then remove the 3 core patch lines (or leave them — they're inert without the 
 ### Known limitations
 
 - The plugin's label/description shown in the **Administration > Plugins** tab (`tplugins` table) stays in French: GestSup has no multi-language mechanism for those two fields (the reference `availability` plugin has the same limitation). The **rest of the UI** (menu, page, messages) is fully bilingual and follows the logged-in user's language.
-- Matching is a strict equality check on `companyName` — no case- or accent-insensitive matching. This is deliberate, to avoid false positives.
+- Matching is a strict equality check on `companyName` - no case- or accent-insensitive matching. This is deliberate, to avoid false positives.
 
 ### Changelog
 
-**1.0** — Initial release: Entra ID company / agency mapping, admin page, FR/EN UI.
+**1.0** - Initial release: Entra ID company / agency mapping, admin page, FR/EN UI.
 
 ---
 
